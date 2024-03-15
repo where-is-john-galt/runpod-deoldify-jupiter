@@ -45,7 +45,7 @@ def handler(job):
         presigned_url = upload_file_to_bucket(file_name=file_name, file_location=result_path, prefix="your_prefix_here")
 
         os.remove(result_path)
-        
+
         return {"result_url": presigned_url}
     except Exception as e:
         return {"error": str(e)}
