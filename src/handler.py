@@ -14,9 +14,14 @@ from runpod.serverless.utils.rp_validator import validate
 from rp_schemas import INPUT_SCHEMA
 import re
 import functools
+from fastai.basic_train import Recorder
 
-# Add functools.partial to safe globals for PyTorch 2.6+
-torch.serialization.add_safe_globals([functools.partial])
+# Add safe globals for PyTorch 2.6+
+safe_globals = [
+    functools.partial,
+    Recorder
+]
+torch.serialization.add_safe_globals(safe_globals)
 
 # Suppress specific warnings
 warnings.filterwarnings("ignore", category=UserWarning, message=".*?Your .*? set is empty.*?")
