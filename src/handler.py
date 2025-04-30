@@ -13,6 +13,10 @@ from runpod.serverless.utils import rp_download, upload_file_to_bucket, upload_i
 from runpod.serverless.utils.rp_validator import validate
 from rp_schemas import INPUT_SCHEMA
 import re
+import functools
+
+# Add functools.partial to safe globals for PyTorch 2.6+
+torch.serialization.add_safe_globals([functools.partial])
 
 # Suppress specific warnings
 warnings.filterwarnings("ignore", category=UserWarning, message=".*?Your .*? set is empty.*?")
