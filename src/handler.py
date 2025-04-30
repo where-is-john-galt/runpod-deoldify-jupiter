@@ -15,11 +15,13 @@ from rp_schemas import INPUT_SCHEMA
 import re
 import functools
 from fastai.basic_train import Recorder
+from torch.nn.modules.container import Sequential
 
 # Add safe globals for PyTorch 2.6+
 safe_globals = [
     functools.partial,
-    Recorder
+    Recorder,
+    Sequential
 ]
 torch.serialization.add_safe_globals(safe_globals)
 

@@ -8,3 +8,6 @@ tornado
 imgaug==0.2.6
 runpod
 IPython
+--extra-index-url https://download.pytorch.org/whl/cu113
+torch==1.11.0
+torchvision==0.12.0
