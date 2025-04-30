@@ -1,0 +1,23 @@
+{
+    "title": "Worker DeOldify",
+    "description": "Colorize black-and-white photos using deep learning and DeOldify. This worker runs on RunPod Serverless with GPU acceleration.",
+    "type": "serverless",
+    "category": "image",
+    "iconUrl": "https://avatars.githubusercontent.com/u/16674412?s=48&v=4",
+    "config": {
+      "runsOn": "GPU",
+      "containerDiskInGb": 20,
+      "presets": [
+        {
+          "name": "Default Settings",
+          "defaults": {
+            "image": "https://upload.wikimedia.org/wikipedia/commons/8/84/Example_black_and_white_photo.jpg",
+            "render_factor": 35,
+            "watermarked": false
+          }
+        }
+      ],
+      "env": []
+    }
+  }
+  

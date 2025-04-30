@@ -1,8 +1,10 @@
 # rp_schemas.py
+
 INPUT_SCHEMA = {
-    'source_url': {
+    'image': {
         'type': str,
-        'required': True
+        'required': True,
+        'description': 'URL or base64 encoded image'
     },
     'render_factor': {
         'type': int,
@@ -14,5 +16,5 @@ INPUT_SCHEMA = {
         'type': bool,
         'required': False,
         'default': False
-    },
+    }
 }
