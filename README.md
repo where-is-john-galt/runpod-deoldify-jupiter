@@ -2,6 +2,8 @@
 
 A serverless worker for **image colorization** using [DeOldify](https://github.com/jantic/DeOldify), deployed on [RunPod](https://www.runpod.io). This worker takes a black-and-white image URL and returns a colorized version using a deep learning model.
 
+[![RunPod](https://api.runpod.io/badge/kodxana/worker-deoldify)](https://www.runpod.io/console/hub/kodxana/worker-deoldify)
+
 ---
 
 ## ✨ Features
