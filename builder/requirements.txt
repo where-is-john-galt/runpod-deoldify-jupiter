@@ -7,3 +7,4 @@ Pillow
 tornado
 imgaug==0.2.6
 runpod
+IPython
