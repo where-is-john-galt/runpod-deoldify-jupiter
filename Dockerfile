@@ -21,4 +21,4 @@ ADD src /app
 
 RUN wget -O models/ColorizeArtistic_gen.pth https://data.deepai.org/deoldify/ColorizeArtistic_gen.pth
 
-CMD python3.11 -u /app/handler.py
+CMD sleep infinity
