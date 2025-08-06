@@ -66,7 +66,7 @@ RUN mkdir -p /workspace/DeOldify/models \
  && wget https://data.deepai.org/deoldify/ColorizeArtistic_gen.pth
 
 # Dodaj przykładowy notebook (uruchamiający DeOldify)
-COPY --chown=developer:developer deoldify_example.ipynb /workspace/DeOldify/deoldify_example.ipynb
+# COPY --chown=developer:developer deoldify_example.ipynb /workspace/DeOldify/deoldify_example.ipynb
 
 # Eksponuj porty: 8888 (Jupyter), 2222 (SSH)
 EXPOSE 8888 2222
