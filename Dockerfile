@@ -4,8 +4,11 @@ FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu20.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 
-# Instalacja systemowych narzędzi i SSH
+# Dodaj repozytorium deadsnakes i zainstaluj Python 3.7
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    software-properties-common \
+    && add-apt-repository ppa:deadsnakes/ppa \
+    && apt-get update && apt-get install -y --no-install-recommends \
     openssh-server \
     build-essential \
     git \
@@ -13,7 +16,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     wget \
     gnupg \
-    software-properties-common \
     ffmpeg \
     libsm6 \
     libxext6 \
