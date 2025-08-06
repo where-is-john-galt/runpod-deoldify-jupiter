@@ -1,24 +1,77 @@
-# Base image -> https://github.com/runpod/containers/blob/main/official-templates/base/Dockerfile
-# DockerHub -> https://hub.docker.com/r/runpod/base/tags
-FROM runpod/base:0.6.2-cuda12.1.0
+# CUDA 11.8 + cuDNN 8 + Ubuntu 20.04
+FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu20.04
 
-# The base image comes with many system dependencies pre-installed to help you get started quickly.
-# Please refer to the base image's Dockerfile for more information before adding additional dependencies. [cite: 2]
-# IMPORTANT: The base image overrides the default huggingface cache location. [cite: 3]
-WORKDIR /app
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
 
-# Python dependencies
-COPY builder/requirements.txt /requirements.txt
-# Zmieniono wersję Pythona z 3.11 na 3.9, aby była kompatybilna z pakietem torch==1.11.0
-RUN python3.9 -m pip install --upgrade pip && \
-    python3.9 -m pip install --upgrade -r /requirements.txt --no-cache-dir && \
-    rm /requirements.txt
+# Instalacja systemowych narzędzi i SSH
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openssh-server \
+    build-essential \
+    git \
+    curl \
+    ca-certificates \
+    wget \
+    gnupg \
+    software-properties-common \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    python3.7 \
+    python3.7-dev \
+    python3.7-venv \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/jantic/DeOldify.git /app
+# Konfiguracja SSH i użytkowników
+RUN mkdir /var/run/sshd \
+ && echo "root:root" | chpasswd \
+ && useradd -m developer \
+ && echo "developer:developer" | chpasswd \
+ && sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config \
+ && echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
 
-# Add src files (Worker Template)
-ADD src /app
+# Ustaw Python 3.7 jako domyślny
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.7 1 \
+ && update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
 
-RUN wget -O models/ColorizeArtistic_gen.pth https://data.deepai.org/deoldify/ColorizeArtistic_gen.pth
+# Instalacja bibliotek Python (DeOldify-kompatybilnych)
+RUN pip install --upgrade pip \
+ && pip install \
+    numpy==1.19.5 \
+    pandas \
+    matplotlib \
+    fastai==1.0.61 \
+    opencv-python==4.1.2.30 \
+    Pillow==6.2.2 \
+    jupyterlab \
+    ipywidgets \
+    notebook \
+    jupyter-server \
+    jupyterlab-git \
+    torchvision==0.8.2 \
+    torch==1.7.1+cu110 \
+    -f https://download.pytorch.org/whl/torch_stable.html
 
-CMD sleep infinity
+# Katalog roboczy
+WORKDIR /workspace
+RUN chown developer:developer /workspace
+
+# Pobierz DeOldify z GitHuba
+RUN git clone https://github.com/jantic/DeOldify.git /workspace/DeOldify \
+ && cd /workspace/DeOldify && git checkout master
+
+# Pobierz pretrenowane modele (colorizer art)
+RUN mkdir -p /workspace/DeOldify/models \
+ && cd /workspace/DeOldify/models \
+ && wget https://data.deepai.org/deoldify/ColorizeArtistic_gen.pth
+
+# Dodaj przykładowy notebook (uruchamiający DeOldify)
+COPY --chown=developer:developer deoldify_example.ipynb /workspace/DeOldify/deoldify_example.ipynb
+
+# Eksponuj porty: 8888 (Jupyter), 2222 (SSH)
+EXPOSE 8888 2222
+
+# Start SSH + Jupyter
+CMD service ssh start && \
+    cd /workspace/DeOldify && \
+    jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''
